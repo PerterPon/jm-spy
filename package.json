@@ -1,0 +1,25 @@
+{
+  "name": "jm-spy",
+  "main": "",
+  "test": "",
+  "version": "0.0.5",
+  "dependencies": {
+    "coffee-script": "*"
+  },
+  "devDependencies": {
+    "expect.js": "*",
+    "mocha": "*",
+    "istanbul": "*"
+  },
+  "engines": [
+    "node >=0.8.14"
+  ],
+  "scripts": {
+    "test": "make test"
+  },
+  "readme": "# Spy module stripped from the jasmine.",
+  "readmeFilename": "README.md",
+  "description": "",
+  "_id": "jm-spy@0.0.4",
+  "_from": "jm-spy@*"
+}
