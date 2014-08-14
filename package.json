@@ -2,11 +2,11 @@
   "name": "jm-spy",
   "main": "",
   "test": "",
-  "version": "0.0.5",
-  "dependencies": {
-    "coffee-script": "*"
-  },
+  "version": "0.0.6",
+  "dependencies": {},
   "devDependencies": {
+    "coffee-script": "*",
+    "jm-spy": "*",
     "expect.js": "*",
     "mocha": "*",
     "istanbul": "*"
@@ -15,11 +15,12 @@
     "node >=0.8.14"
   ],
   "scripts": {
-    "test": "make test"
+    "test": "make test-cov",
+    "prepublish": "make release"
   },
   "readme": "# Spy module stripped from the jasmine.",
   "readmeFilename": "README.md",
   "description": "",
-  "_id": "jm-spy@0.0.4",
+  "_id": "jm-spy@0.0.6",
   "_from": "jm-spy@*"
 }
