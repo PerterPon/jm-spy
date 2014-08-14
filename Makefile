@@ -33,14 +33,12 @@ TESTS             = $(shell find tests -type f -name test-*)
 -TESTS_ENV       := tests/env.js
 -COVERAGE_ENV    := $(addprefix $(-COVERAGE_DIR),$(-TESTS_ENV))
 
--LOGS_DIR        := logs
-
 -GIT_REV         := $(shell git show | head -n1 | cut -f 2 -d ' ')
 -GIT_REV         := $(shell echo "print substr('$(-GIT_REV)', 0, 8);" | /usr/bin/env perl)
 
 default: dev
 
--common-pre: clean -npm-install -logs
+-common-pre: -npm-install clean
 
 dev: -common-pre
 	@$(-BIN_MOCHA) \
@@ -59,41 +57,18 @@ test: -common-pre
 		--require $(-TESTS_ENV) \
 		$(-TESTS)
 
--pre-test-cov: -common-pre
-	@echo 'copy files'
-	@mkdir -p $(-COVERAGE_DIR)
-
-	@rsync -av . $(-COVERAGE_DIR) --exclude out --exclude .git --exclude node_modules
-	@rsync -av ./node_modules $(-COVERAGE_DIR)
-	@$(-BIN_COFFEE) -cb out/test
-	@find ./out/test -path ./out/test/node_modules -prune -o -name "*.coffee" -exec rm -rf {} \;
-
-test-cov: -pre-test-cov
-	@cd $(-COVERAGE_DIR) && \
-		$(-BIN_ISTANBUL) cover ./node_modules/.bin/_mocha -- -u bdd -R tap -r $(-TESTS_ENV) $(patsubst $(-COVERAGE_DIR)%, %, $(-COVERAGE_TESTS)) && \
-	  $(-BIN_ISTANBUL) report html
+test-cov: release
+	@$(-BIN_ISTANBUL) cover ./node_modules/.bin/_mocha -- -u bdd -R tap -r $(-TESTS_ENV) $(-TESTS) --compilers coffee:coffee-script/register && \
+  $(-BIN_ISTANBUL) report html
 	
-
--release-pre : -common-pre
+release: clean
 	@echo 'copy files'
 	@mkdir -p $(-RELEASE_DIR)
-
-	@if [ `echo $$OSTYPE | grep -c 'darwin'` -eq 1 ]; then \
-		cp -r $(-RELEASE_COPY) $(-RELEASE_DIR); \
-	else \
-		cp -rL $(-RELEASE_COPY) $(-RELEASE_DIR); \
-	fi
 	@echo $(-GIT_REV)
-	@cd $(-RELEASE_DIR)
-
-	@cp package.json $(-RELEASE_DIR)
-
-	@cd $(-RELEASE_DIR) && PYTHON=`which python2.6` npm --color=false --registry=http://registry.npm.taobao.net install --production
-
-
-release: -release-pre
-	@rm -fr $(-RELEASE_DIR)/tests
-	@echo "all codes in \"$(-RELEASE_DIR)\""
+	@cp -r lib $(-RELEASE_DIR)/lib
+	@$(-BIN_COFFEE) -cb $(-RELEASE_DIR)
+	@find $(-RELEASE_DIR) -name "*.coffee" -exec rm -rf {} \;
+	@echo "jmspy make release done"
 
 .-PHONY: default
 
@@ -103,7 +78,3 @@ release: -release-pre
 clean:
 	@echo 'clean'
 	@-rm -fr out
-	@-rm -fr $(-LOGS_DIR)
-
--logs:
-	@mkdir -p $(-LOGS_DIR)
