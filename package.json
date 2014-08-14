@@ -2,7 +2,7 @@
   "name": "jm-spy",
   "main": "",
   "test": "",
-  "version": "0.0.6",
+  "version": "0.0.8",
   "dependencies": {},
   "devDependencies": {
     "coffee-script": "*",
